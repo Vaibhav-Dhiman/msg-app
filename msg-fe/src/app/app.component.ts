@@ -23,7 +23,7 @@ export class AppComponent implements OnInit{
   post() {
     if(this.message) {
       this.service.saveMsg(this.message, this.userName).subscribe(data => {
-        if(data === 'success') {
+        if(data) {
           this.service.getMsg().subscribe(msg => {
             if(msg) {
               this.msgs = msg;

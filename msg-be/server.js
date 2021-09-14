@@ -17,19 +17,15 @@ db.once('open', function callback () {
   console.log("database connected");
 });
 
-const MessageSchema = new mongoose.Schema({
-  user: String,
+const Message = mongoose.model('Message', {
+  userName: String,
   msg: String
 });
 
-const Message = mongoose.model('Message', MessageSchema);
-  
-
-const UserSchema = new mongoose.Schema({
-  user: String
+const User = mongoose.model('User', {
+  name: String,
+  messages: [{type: mongoose.Schema.Types.ObjectId, ref: 'Message'}]
 });
-
-const User = mongoose.model('User', UserSchema);
 
 app.get('/api/message', async (req, res) => {
   const docs = await Message.find();
@@ -40,13 +36,16 @@ app.get('/api/message', async (req, res) => {
 app.post('/api/message', async (req, res) => {
   const message = new Message(req.body);
   message.save();
-  console.log(message);
 
-  const foundUser = await User.findOne({ name: message.user});
-  console.log(foundUser);
+  let user = await User.findOne({ name: message.user});
+  console.log(user);
 
-  if(!foundUser) (new User({name: message.user})).save();
-  res.json('success');
+  if(!user)  {
+    user = new User({user: message.user});
+  }
+  user.messages.push(message);
+  user.save();
+  res.json(true);
 })
 
 
