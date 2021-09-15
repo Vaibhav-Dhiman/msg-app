@@ -21,7 +21,7 @@ export class AppComponent implements OnInit{
   }
 
   post() {
-    if(this.message) {
+    if(this.message.length > 0) {
       this.service.saveMsg(this.message, this.userName).subscribe(data => {
         if(data) {
           this.service.getMsg().subscribe(msg => {
@@ -31,6 +31,8 @@ export class AppComponent implements OnInit{
           });
         };
     });
+    } else {
+      alert('username cannot be blank');
     }
   }
 }
